@@ -22,13 +22,8 @@ if [[ LOGCOUNT -gt  KEEP ]]
 then
     #Subtract 5 from the count of current zip files
         LOGDELCOUNT=$(echo "$LOGCOUNT-$KEEP" | bc)
-    #List the files by filename only in one column...
-    #iterate through the list of files and delete each one.
-        for n in $(ls -1 $FILESPEC.*.zip | head -$LOGDELCOUNT)
-        do
-                #rm -f b;
-                echo "Deleting $n..."
-        rm -f $n;
-        done
+    #Delete the remaining zip files
+        echo "Deleting older zip files..."
+        rm -f $(ls -1 $FILESPEC.*.zip | head -$LOGDELCOUNT)
 fi
 printf "\n\n\nDone!\n"
