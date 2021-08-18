@@ -3,6 +3,8 @@
 #  Name it as 'theme'
 #  Place it in /usr/bin/
 #  shell_prompt$ theme
+#  to test: for n in {1..126}; do echo Theme $n; /usr/local/bin/termtheme $n; ls -al / ; sleep 5; done
+
 if [ -z "$1" ] 
 then
 echo '
