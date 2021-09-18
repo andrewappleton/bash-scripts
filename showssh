@@ -1,0 +1,11 @@
+function showssh() {
+    if [ -z $1 ]
+    then
+        PARAM="."
+    else
+        PARAM=$1
+    fi
+    cat ~/.ssh/config | grep -E '^Host' | awk '{ printf "%s\t %16s\n",$3,$2 }' | grep $PARAM
+
+}
+export showssh
