@@ -1,0 +1,2 @@
+#!/bin/zsh
+lsof -c VLC | grep -i volumes | rev | cut -d'/' -f1 | rev
