@@ -1,0 +1,51 @@
+#!/usr/bin/bash
+FOLDER=$(date +%F-%H%M)
+BASE="/opt/genesys/logs/"
+mkdir -p /z/Logs/$FOLDER
+if [ $# -eq 0 ]
+then
+	echo "No argument detected, so using 30 as default..."
+	PERIOD=30
+else
+	echo "Using $1 as period"
+	PERIOD=$1
+fi
+HOSTINFO="./hostinfo"
+QUIET="-q"
+while IFS= read -r LINE
+do
+	HOST=$(echo $LINE | cut -d':' -f1)
+	DIR=$(echo $LINE | cut -d':' -f2)
+	echo "Getting $DIR from $HOST..."
+	ssh -n $QUIET genesys_preprod@$HOST "rm -f /tmp/$DIR.zip"
+	ssh -n $QUIET genesys_preprod@$HOST "find $BASE$DIR -mmin -$PERIOD | grep -v snapshot | zip -j /tmp/$DIR.zip -@"
+	scp $QUIET genesys_preprod@$HOST:/tmp/$DIR.zip ./$FOLDER
+	ssh -n $QUIET genesys_preprod@$HOST "rm -f /tmp/$DIR.zip"
+	echo "Done with $HOST"
+done < "$HOSTINFO"
+zip -r --password genesys $FOLDER.zip $FOLDER
+
+# glog - v0.2
+# 2023.01.25	ARA	Initial version
+# 2023.01.26	ARA	Corrected argument check - was inverted...
+# 2023.01.26	ARA	Added -j flag to zip in order to remove original source path from logs
+# 2023.01.27	ARA	Added password-protected zip archiving of logs folder
+
+# TODO
+# If multiple folders on same host, then collect all rather than disconnecting/reconnecting.  
+# Priority: Medium
+# Difficulty: Medium
+# 	Could be done by sorting the hostinfo list when reading it and then doing a check
+#	on the next host matching the previous host
+#
+# Unzip indivdual files after SCP
+# Priority: Low
+# Difficulty: Medium
+# 	Would reduce work on local side when reviewing logs
+#	Could be managed as an option
+#
+# Provide more argument options
+# Priority: Medium
+# Difficulty: Medium
+# 	Would provide more flexibility in providing paths and period values.
+#	Could be implemented as a second config file along with the hosts
