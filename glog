@@ -26,8 +26,8 @@ done < "$HOSTINFO"
 zip -r --password genesys $FOLDER.zip $FOLDER
 
 # HOSTINFO FORMAT
-# hostname:full-path-to-directory
-# hostname:full-path-to-directory
+# hostname:directory
+# hostname:directory
 
 # glog - v0.2
 # 2023.01.25	ARA	Initial version
